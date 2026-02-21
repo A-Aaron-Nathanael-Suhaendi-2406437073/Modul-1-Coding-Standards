@@ -121,4 +121,74 @@ class ProductRepositoryTest {
         assertNull(result);
     }
 
+    @Test
+    void testCreateProductWithNullId() {
+        Product product = new Product();
+        product.setProductName("Sampo Cap Kucil");
+        product.setProductQuantity(100);
+
+        Product savedProduct = productRepository.create(product);
+
+        assertNotNull(savedProduct.getProductId());
+        assertEquals("Sampo Cap Kucil", savedProduct.getProductName());
+    }
+
+    @Test
+    void testFindByIdProductFound() {
+        Product product1 = new Product();
+        product1.setProductId("id-1");
+        productRepository.create(product1);
+
+        Product product2 = new Product();
+        product2.setProductId("id-2");
+        productRepository.create(product2);
+
+        Product foundProduct = productRepository.findById("id-2");
+        assertNotNull(foundProduct);
+        assertEquals("id-2", foundProduct.getProductId());
+    }
+
+    @Test
+    void testFindByIdProductNotFoundInPopulatedList() {
+        Product product1 = new Product();
+        product1.setProductId("id-1");
+        productRepository.create(product1);
+
+        Product foundProduct = productRepository.findById("id-salah");
+        assertNull(foundProduct);
+    }
+
+    @Test
+    void testEditProductNotFirstItem() {
+        Product product1 = new Product();
+        product1.setProductId("id-1");
+        productRepository.create(product1);
+
+        Product product2 = new Product();
+        product2.setProductId("id-2");
+        product2.setProductName("Barang Asli");
+        productRepository.create(product2);
+
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("id-2");
+        updatedProduct.setProductName("Barang Palsu");
+        productRepository.update(updatedProduct);
+
+        Product checkProduct = productRepository.findById("id-2");
+        assertEquals("Barang Palsu", checkProduct.getProductName());
+    }
+
+    @Test
+    void testEditProductNotFoundInPopulatedList() {
+        Product product1 = new Product();
+        product1.setProductId("id-1");
+        productRepository.create(product1);
+
+        Product missingProduct = new Product();
+        missingProduct.setProductId("id-2");
+        Product result = productRepository.update(missingProduct);
+
+        assertNull(result);
+    }
+
 }
