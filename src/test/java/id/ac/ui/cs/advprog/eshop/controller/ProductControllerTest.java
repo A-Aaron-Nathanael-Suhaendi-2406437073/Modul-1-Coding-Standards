@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebMvcTest(controllers = ProductController.class)
 class ProductControllerTest {
@@ -94,5 +95,11 @@ class ProductControllerTest {
         mockMvc.perform(get("/product/delete/" + product.getProductId()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("../list"));
+    }
+
+    @Test
+    void testControllerConstructor() {
+        ProductController controller = new ProductController(productService);
+        assertNotNull(controller);
     }
 }
