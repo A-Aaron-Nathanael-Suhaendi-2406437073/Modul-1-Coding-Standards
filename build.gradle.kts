@@ -77,11 +77,17 @@ tasks.test {
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+    }
 }
 
 sonar {
     properties {
         property("sonar.projectKey", "A-Aaron-Nathanael-Suhaendi-2406437073_Modul-1-Coding-Standards")
         property("sonar.organization", "a-aaron-nathanael-suhaendi-2406437073")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
