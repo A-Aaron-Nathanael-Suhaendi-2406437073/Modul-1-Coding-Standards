@@ -15,6 +15,6 @@ jobs:
       - name: Trigger Koyeb Deployment
         uses: koyeb/action-git-deploy@v1
         with:
-          api_token: ${{ secrets.KOYEB_API_TOKEN }}
-          app_name: "slow-fredia"
-          service_name: "modul-1-coding-standards"
+          api-token: ${{ secrets.KOYEB_API_TOKEN }}
+          app-name: "slow-fredia"
+          service-name: "modul-1-coding-standards"
