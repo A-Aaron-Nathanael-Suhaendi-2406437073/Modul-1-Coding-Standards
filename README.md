@@ -89,3 +89,42 @@ Strategi: Saya menghapus baris import tersebut. Meskipun terlihatny sepele, memb
 Nomor 2 : Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current implementation has met the definition of Continuous Integration and Continuous Deployment? Explain the reasons (minimum 3 sentences)!
 
 Ya, menurut saya implementasi workflow GitHub yang ada saat ini sudah sangat memenuhi definisi Continuous Integration (CI) maupun Continuous Deployment (CD). Dari sisi Continuous Integration, setiap kali ada perubahan kode yang di push atau di merge, GitHub Actions secara otomatis akan menjalankan proses build, mengeksekusi unit test suite (beserta laporan coverage dari JaCoCo), dan melakukan analisis kualitas kode menggunakan SonarCloud. Proses otomatis ini memastikan bahwa kode baru yang diintegrasikan aman, tidak merusak fitur yang sudah ada, dan memenuhi standar kualitas sebelum benar2 digabungkan ke repositori utama. Sementara itu, dari sisi Continuous Deployment, alur kerjanya berjalan menggunakan pendekatan push-based. Saya telah membuat workflow tambahan (deploy.yml) yang memanfaatkan GitHub Actions untuk secara otomatis memicu proses deployment ke Koyeb setiap kali ada kode yang berhasil di merge ke branch main. Dengan cara ini, GitHub secara aktif mengirimkan perintah ke Koyeb untuk membuild dan mengdeploy aplikasi ke server production tanpa intervensi manual, ini memastikan fitur terbaru dapat segera digunakan oleh pengguna.
+
+
+
+
+MODULE 3
+
+
+Nomor 1 :  Explain what principles you apply to your project!
+
+Pada proyek ini, saya telah menerapkan kelima prinsip SOLID:
+
+Single Responsibility Principle (SRP): Saya memisahkan ProductController dan CarController ke dalam 2 file Java yang berbeda. Sekarang, setiap controller hanya memiliki satu alasan untuk berubah (satu fokus tanggung jawab), yaitu mengurus rutenya masing-masing (satu ngurusin rute Product, satu ngurusin rute Car).
+
+Open-Closed Principle (OCP): Saya sudah mengimplementasikan ini di code before-solid, yaitu penggunaan interface CarService memungkinkan sistem untuk lebih terbuka terhadap ekstensi/penambahan fitur baru tanpa memodifikasi kode lama. Jika ke depannya ada layanan Car baru, saya cukup membuat class baru yang mengimplementasikan interface tersebut.
+
+Liskov Substitution Principle (LSP): Saya menghapus hierarki inheritance (extends ProductController) pada CarController. Sebuah mobil (Car) bukanlah anak dari entitas produk (Product) secara konseptual di arsitektur ini. Memisahkan keduanya memastikan perilaku program tetap konsisten.
+
+Interface Segregation Principle (ISP): Saya sudah mengimplementasikan ini di code before-solid, Interface CarService dibuat spesifik dan berukuran kecil (hanya berisi metode CRUD khusus car). Class yang mengimplementasikan interface ini juga tidak dipaksa untuk override fungsi-fungsi yang tidak berhubungan.
+
+Dependency Inversion Principle (DIP): Saya mengubah cara injeksi dependensi dari Field Injection (@Autowired di atas variabel) menjadi Constructor Injection. Selain itu, modul CarController sekarang bergantung pada abstraksi (interface CarService), bukan lagi pada implementasi konkritnya (CarServiceImpl).
+
+
+
+Nomor 2 : Explain the advantages of applying SOLID principles to your project with examples.
+
+Keuntungan utama menerapkan SOLID adalah membuat kode menjadi lebih maintainable, skalabel, dan mudah diuji (testable).
+
+Contoh SRP: Jika terdapat bug pada fitur routing mobil, saya tahu persis saya hanya perlu memeriksa file CarController.java tanpa takut merusak fitur atau mengganggu code milik Product. File code juga menjadi lebih pendek dan mudah dibaca.
+
+Contoh DIP dan OCP: Dengan bergantung pada abstraksi (interface CarService) dan menggunakan Constructor Injection, kode saya menjadi sangat mudah untuk dilakukan Unit Testing. Saya bisa dengan mudah memasukkan objek tiruan (mock data) lewat constructor tanpa harus menjalankan server secara penuh. Jika ke depannya saya beralih menggunakan database lain, saya hanya perlu membuat class CarServiceBaruImpl.java tanpa perlu mengubah satu baris pun di CarController.java.
+
+
+Nomor 3 : Explain the disadvantages of not applying SOLID principles to your project with examples.
+
+Tidak menerapkan prinsip SOLID akan membuat kode menjadi kaku (rigid), rapuh (fragile), dan sangat sulit dikelola seiring membesarnya ukuran proyek (biasanya disebut Spaghetti Code).
+
+Contoh (Pelanggaran SRP): Saat CarController masih tergabung di dalam file ProductController.java (sebelum refactoring), file tersebut menanggung terlalu banyak beban. Jika proyek membesar dan memiliki fitur User, Payment, dll yang juga ditumpuk di satu file, file tersebut bisa mencapai ribuan baris kode yang akan menyulitkan developer saat mencari letak error.
+
+Contoh (Pelanggaran DIP): Saat menggunakan Field Injection (@Autowired private CarServiceImpl carservice;), Controller bergantung pada satu class konkrit yang sangat spesifik. Ini membuat kode sangat kaku. Jika nanti tiba2 kita diminta algoritma service yang baru, saya terpaksa harus membongkar ulang isi Controller, yang beresiko memunculkan error baru di tempat yang lain.
