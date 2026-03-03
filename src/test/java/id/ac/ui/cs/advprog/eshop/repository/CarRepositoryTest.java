@@ -74,4 +74,31 @@ class CarRepositoryTest {
         Iterator<Car> carIterator = carRepository.findAll();
         assertFalse(carIterator.hasNext());
     }
+
+    @Test
+    void testCreateCarWithNullId() {
+        Car car = new Car();
+        car.setCarName("Pajero Sport");
+        car.setCarColor("Putih");
+        car.setCarQuantity(5);
+
+        Car savedCar = carRepository.create(car);
+
+        assertNotNull(savedCar.getCarId());
+    }
+
+    @Test
+    void testFindByIdIfNotFound() {
+        Car foundCar = carRepository.findById("id-ngasal-yang-nggak-ada");
+        assertNull(foundCar);
+    }
+
+    @Test
+    void testUpdateIfNotFound() {
+        Car updatedCar = new Car();
+        updatedCar.setCarName("Innova");
+
+        Car result = carRepository.update("id-ngasal-yang-nggak-ada", updatedCar);
+        assertNull(result);
+    }
 }
